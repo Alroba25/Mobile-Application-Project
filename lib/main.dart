@@ -374,7 +374,7 @@ class AppDrawer extends StatelessWidget {
   }
 }
 
-/// Levels page
+//** Levels page
 class LevelsPage extends StatelessWidget {
   const LevelsPage({super.key});
 
@@ -492,7 +492,7 @@ class LevelCategoriesPage extends StatelessWidget {
 
             /// Buttons
             categoryButton(
-              text: 'Vocabulary %',
+              text: 'Vocabulary',
               onTap: () {
                 Navigator.push(
                   context,
@@ -505,7 +505,7 @@ class LevelCategoriesPage extends StatelessWidget {
 
             const SizedBox(height: 40),
             categoryButton(
-              text: 'Listening %',
+              text: 'Listening',
               onTap: () {
                 Navigator.push(
                   context,
@@ -517,7 +517,7 @@ class LevelCategoriesPage extends StatelessWidget {
             ),
             const SizedBox(height: 40),
             categoryButton(
-              text: 'Grammar %',
+              text: 'Grammar',
               onTap: () {
                 Navigator.push(
                   context,
@@ -1229,14 +1229,63 @@ class StoriesPage extends StatelessWidget {
         character: 'Sherlock Holmes',
         authors: 'Sir Arthur Conan Doyle',
         rate: 4.6,
-        image: 'assets/Capture.PNG',
+        image: 'assets/1.jpg',
       ),
       Story(
-        title: 'The Pirates of the Caribbean',
-        character: 'Captain Jack Sparrow',
-        authors: 'Ted Elliott and Terry Rossio',
+        title: 'Treasure Island',
+        character: 'Jim Hawkins',
+        authors: 'Robert Louis Stevenson',
+        rate: 4.7,
+        image: 'assets/2.jpg',
+      ),
+      Story(
+        title: 'The Adventures of Tom Sawyer',
+        character: 'Tom Sawyer',
+        authors: 'Mark Twain',
+        rate: 4.5,
+        image: 'assets/3.jpg',
+      ),
+      Story(
+        title: 'Alice in Wonderland',
+        character: 'Alice',
+        authors: 'Lewis Carroll',
         rate: 4.8,
-        image: 'assets/Capture.PNG',
+        image: 'assets/4.jpg',
+      ),
+      Story(
+        title: 'Moby Dick',
+        character: 'Captain Ahab',
+        authors: 'Herman Melville',
+        rate: 4.2,
+        image: 'assets/5.jpg',
+      ),
+      Story(
+        title: 'Around the World in 80 Days',
+        character: 'Phileas Fogg',
+        authors: 'Jules Verne',
+        rate: 4.6,
+        image: 'assets/6.jpg',
+      ),
+      Story(
+        title: 'The Jungle Book',
+        character: 'Mowgli',
+        authors: 'Rudyard Kipling',
+        rate: 4.9,
+        image: 'assets/7.jpg',
+      ),
+      Story(
+        title: 'The Secret Garden',
+        character: 'Mary Lennox',
+        authors: 'Frances Hodgson Burnett',
+        rate: 4.4,
+        image: 'assets/8.jpg',
+      ),
+      Story(
+        title: 'Peter Pan',
+        character: 'Peter Pan',
+        authors: 'J. M. Barrie',
+        rate: 4.7,
+        image: 'assets/9.jpg',
       ),
     ];
 
