@@ -893,24 +893,71 @@ class _TestPageState extends State<TestPage> {
   int? selectedIndex;
 
   final List<Question> questions = [
-    Question('What is the capital of France?', [
-      'London',
-      'Berlin',
-      'Paris',
-      'Rome',
-    ], 2),
-    Question('Flutter is developed by?', [
-      'Apple',
-      'Google',
-      'Microsoft',
-      'Meta',
-    ], 1),
-    Question('Which language is used in Flutter?', [
-      'Java',
-      'Kotlin',
-      'Swift',
-      'Dart',
-    ], 3),
+    Question(
+      'What is the capital of France?',
+      ['London', 'Berlin', 'Paris', 'Rome'],
+      2,
+      'assets/Capture.PNG',
+    ),
+    Question(
+      'Which language is used in Flutter?',
+      ['Java', 'Kotlin', 'Swift', 'Dart'],
+      3,
+      'assets/Capture.PNG',
+    ),
+    Question(
+      'Flutter is developed by?',
+      ['Apple', 'Google', 'Microsoft', 'Meta'],
+      1,
+      'assets/Capture.PNG',
+    ),
+    Question(
+      'Which one is a programming language?',
+      ['HTML', 'CSS', 'Python', 'Photoshop'],
+      2,
+      'assets/Capture.PNG',
+    ),
+    Question(
+      'What does CPU stand for?',
+      [
+        'Central Process Unit',
+        'Central Processing Unit',
+        'Computer Personal Unit',
+        'Central Program Unit',
+      ],
+      1,
+      'assets/Capture.PNG',
+    ),
+    Question(
+      'Which company owns Android?',
+      ['Apple', 'Samsung', 'Google', 'Microsoft'],
+      2,
+      'assets/Capture.PNG',
+    ),
+    Question('What is 2 + 2?', ['3', '4', '5', '6'], 1, 'assets/Capture.PNG'),
+    Question(
+      'Which one is NOT an OS?',
+      ['Windows', 'Linux', 'Android', 'Google'],
+      3,
+      'assets/Capture.PNG',
+    ),
+    Question(
+      'Which language is used for web?',
+      ['Dart', 'HTML', 'C++', 'Java'],
+      1,
+      'assets/Capture.PNG',
+    ),
+    Question(
+      'What does UI stand for?',
+      [
+        'User Interface',
+        'User Internet',
+        'Universal Interface',
+        'User Information',
+      ],
+      0,
+      'assets/Capture.PNG',
+    ),
   ];
 
   void nextQuestion() {
@@ -974,10 +1021,28 @@ class _TestPageState extends State<TestPage> {
         child: Column(
           children: [
             /// Question
+            /// Question Image
+            Container(
+              width: double.infinity,
+              height: 180,
+              margin: const EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.asset(q.image, fit: BoxFit.contain),
+              ),
+            ),
+
+            /// Question Text
             Text(
               q.text,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
+
+            const SizedBox(height: 20),
 
             const SizedBox(height: 20),
 
@@ -1108,8 +1173,8 @@ class _ResultPageState extends State<ResultPage>
               children: [
                 /// Circle Score
                 SizedBox(
-                  width: 200,
-                  height: 200,
+                  width: 150,
+                  height: 150,
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
@@ -1210,8 +1275,9 @@ class Question {
   final String text;
   final List<String> options;
   final int correctIndex;
+  final String image;
 
-  Question(this.text, this.options, this.correctIndex);
+  Question(this.text, this.options, this.correctIndex, this.image);
 }
 
 class TestHistoryItem {
@@ -1399,6 +1465,13 @@ class StoriesPage extends StatelessWidget {
         authors: 'J. M. Barrie',
         rate: 4.7,
         image: 'assets/9.jpg',
+      ),
+      Story(
+        title: 'Moby Dick',
+        character: 'Captain Ahab',
+        authors: 'Herman Melville',
+        rate: 4.2,
+        image: 'assets/5.jpg',
       ),
     ];
 
