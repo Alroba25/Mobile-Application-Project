@@ -12,7 +12,7 @@ class LangoraApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Theme وRTL
+    // Theme .ltr
     return MaterialApp(
       title: 'Langora',
       debugShowCheckedModeBanner: false,
@@ -35,30 +35,30 @@ class LangoraApp extends StatelessWidget {
           ),
         ),
       ),
-      // Force RTL for demo (Arabic)
+      // Force.ltr for demo (Arabic)
       home: const Directionality(
-        textDirection: TextDirection.rtl,
+        textDirection: TextDirection.ltr,
         child: SplashScreen(),
       ),
       routes: {
         '/home': (c) => const Directionality(
-          textDirection: TextDirection.rtl,
+          textDirection: TextDirection.ltr,
           child: HomePage(),
         ),
         '/levels': (c) => const Directionality(
-          textDirection: TextDirection.rtl,
+          textDirection: TextDirection.ltr,
           child: LevelsPage(),
         ),
         '/test': (c) => const Directionality(
-          textDirection: TextDirection.rtl,
+          textDirection: TextDirection.ltr,
           child: TestStartPage(),
         ),
         '/history': (c) => const Directionality(
-          textDirection: TextDirection.rtl,
+          textDirection: TextDirection.ltr,
           child: HistoryPage(),
         ),
         '/profile': (c) => const Directionality(
-          textDirection: TextDirection.rtl,
+          textDirection: TextDirection.ltr,
           child: ProfilePage(),
         ),
         '/stories': (c) => const Directionality(
@@ -78,158 +78,271 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
-  int step = 0;
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fade;
+  late Animation<double> _scale;
+
   @override
   void initState() {
     super.initState();
-    // Simulate quick onboarding flow
-    Future.delayed(const Duration(milliseconds: 500), next);
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1400),
+    );
+
+    _fade = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+
+    _scale = Tween<double>(
+      begin: 0.7,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+
+    _controller.forward();
+
+    Future.delayed(const Duration(seconds: 3), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const OnboardingPage()),
+      );
+    });
   }
 
-  void next() async {
-    if (!mounted) return;
-    setState(() => step++);
-    await Future.delayed(const Duration(milliseconds: 700));
-    if (!mounted) return;
-    setState(() => step++);
-    await Future.delayed(const Duration(milliseconds: 700));
-    if (!mounted) return;
-    // انتقل للصفحة الرئيسية / Onboarding
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const OnboardingPage()),
-    );
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).primaryColor;
     return Scaffold(
+      backgroundColor: const Color(0xFF083A3A),
       body: Center(
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 400),
-          child: step == 0
-              ? Container(
-                  key: const ValueKey(1),
-                  width: 90,
-                  height: 160,
-                  color: Colors.black,
-                  alignment: Alignment.center,
+        child: FadeTransition(
+          opacity: _fade,
+          child: ScaleTransition(
+            scale: _scale,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                /// LOGO
+                Container(
+                  width: 110,
+                  height: 110,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF00C6B8),
+                    borderRadius: BorderRadius.circular(22),
+                  ),
                   child: const Icon(
-                    Icons.language,
-                    size: 48,
+                    Icons.menu_book,
+                    size: 60,
                     color: Colors.white,
                   ),
-                )
-              : step == 1
-              ? Container(
-                  key: const ValueKey(2),
-                  width: 90,
-                  height: 160,
-                  color: Colors.black,
-                  alignment: Alignment.center,
-                  child: const Icon(Icons.book, size: 48, color: Colors.white),
-                )
-              : Container(
-                  key: const ValueKey(3),
-                  width: 110,
-                  height: 220,
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  alignment: Alignment.center,
-                  child: const Text(
-                    'Langora',
-                    style: TextStyle(
-                      fontSize: 28,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+                ),
+
+                const SizedBox(height: 24),
+
+                /// TITLE
+                const Text(
+                  'Langora',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
                   ),
                 ),
+
+                const SizedBox(height: 12),
+
+                /// SUBTITLE
+                const Text(
+                  'تعلم بسهولة\nمحتوى منظم وممتع',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.white70),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 }
 
-class OnboardingPage extends StatelessWidget {
+class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
 
   @override
+  State<OnboardingPage> createState() => _OnboardingPageState();
+}
+
+class _OnboardingPageState extends State<OnboardingPage> {
+  final PageController _controller = PageController();
+  int currentIndex = 0;
+
+  final List<_OnboardModel> pages = [
+    _OnboardModel(
+      icon: Icons.school,
+      title: 'تعلم بسهولة',
+      subtitle: 'محتوى منظم وبسيط يساعدك تفهم بسرعة',
+    ),
+    _OnboardModel(
+      icon: Icons.quiz,
+      title: 'اختبارات ذكية',
+      subtitle: 'قيم مستواك وتابع تقدمك خطوة بخطوة',
+    ),
+    _OnboardModel(
+      icon: Icons.menu_book,
+      title: 'قصص تفاعلية',
+      subtitle: 'حسن مهارة الاستماع والفهم',
+    ),
+  ];
+
+  @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).primaryColor;
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: PageView(
-                children: [
-                  onboardingCard(
-                    title: 'تعلم بسهولة',
-                    subtitle: 'محتوى منظم وممتع',
-                    color: color,
-                  ),
-                  onboardingCard(
-                    title: 'اختبارات تفاعلية',
-                    subtitle: 'تابع تقدمك',
-                    color: color,
-                  ),
-                  onboardingCard(
-                    title: 'قصص للاستماع',
-                    subtitle: 'طور مهارات السمع',
-                    color: color,
-                  ),
-                ],
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF0A3D3D), Color(0xFF021F1F)],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              /// Pages
+              Expanded(
+                child: PageView.builder(
+                  controller: _controller,
+                  itemCount: pages.length,
+                  onPageChanged: (i) {
+                    setState(() => currentIndex = i);
+                  },
+                  itemBuilder: (context, i) {
+                    final item = pages[i];
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        /// Icon
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF00C6B8),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(item.icon, size: 60, color: Colors.black),
+                        ),
+
+                        const SizedBox(height: 40),
+
+                        /// Title
+                        Text(
+                          item.title,
+                          style: const TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+
+                        const SizedBox(height: 14),
+
+                        /// Subtitle
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          child: Text(
+                            item.subtitle,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pushReplacementNamed('/home');
-                },
-                child: const Text('ابدأ الآن'),
+
+              /// Indicators
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  pages.length,
+                  (i) => AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin: const EdgeInsets.symmetric(horizontal: 5),
+                    width: currentIndex == i ? 18 : 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: currentIndex == i
+                          ? const Color(0xFF00C6B8)
+                          : Colors.white38,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ],
+
+              const SizedBox(height: 40),
+
+              /// Button
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/home');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF00C6B8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    child: const Text(
+                      'ابدأ الآن',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 50),
+            ],
+          ),
         ),
       ),
     );
   }
+}
 
-  Widget onboardingCard({
-    required String title,
-    required String subtitle,
-    required Color color,
-  }) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: const Color(0xFF012524),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.auto_stories, size: 72, color: color),
-          const SizedBox(height: 24),
-          Text(
-            title,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            subtitle,
-            style: const TextStyle(fontSize: 16, color: Colors.white70),
-          ),
-        ],
-      ),
-    );
-  }
+class _OnboardModel {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+
+  _OnboardModel({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
 }
 
 /// Home Page with drawer and main buttons
@@ -1318,7 +1431,7 @@ class StoriesPage extends StatelessWidget {
 
             const SizedBox(height: 14),
 
-            /// Search bar
+            //**  Search bar
             Container(
               height: 46,
               padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -1387,7 +1500,7 @@ class StoriesPage extends StatelessWidget {
                               Text('character: ${s.character}'),
                               Text('Authors: ${s.authors}'),
                               const SizedBox(height: 6),
-                              Text('Rate: ⭐ ${s.rate}'),
+                              Text('Rate: ⭐${s.rate}'),
                               const SizedBox(height: 10),
 
                               /// Buttons
